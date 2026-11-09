@@ -187,6 +187,27 @@
   .member h3 { margin-top: 1rem; font: 600 1.125rem/1.25 var(--body); }
   .bio { margin-top: .35rem; color: var(--dim); max-width: 46ch; font-size: 1rem; }
 
+  /* Gallery */
+  .gallery { border-top: 1px solid #5a5a5a; }
+  .photos {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: clamp(.5rem, 1.2vw, 1rem);
+  }
+  .photo {
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    background: #1c1c1c;
+    color: #6e6e6e;
+    font-size: 1rem;
+    overflow: hidden;
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
   footer { padding: 2rem var(--gutter) 3rem; color: var(--dim); font-family: var(--scrawl); font-size: 2rem; line-height: 1.1; }
 
   @media (max-width: 720px) {
@@ -244,6 +265,11 @@
     <h2 id="members-title">Ang Team</h2>
     <ul class="team" id="team"></ul>
   </section>
+
+  <section class="block gallery" aria-labelledby="gallery-title">
+    <h2 id="gallery-title">Team Likod V1</h2>
+    <ul class="photos" id="photos"></ul>
+  </section>
 </main>
 
 <footer>Team Likod. Nasa likod mo lang kami.</footer>
@@ -263,6 +289,11 @@
     { name: "Member 7", bio: "Ilagay dito ang description ni Member 7." },
     { name: "Member 8", bio: "Ilagay dito ang description ni Member 8." }
   ];
+
+  /* ====== PALITAN DITO ANG MGA PICTURE NG GALLERY ======
+     Ilagay ang file path sa loob ng quotes, hal. "images/v1/party.jpg".
+     Habang blangko, placeholder ang lalabas. */
+  const GALLERY_V1 = ["", "", "", "", "", ""];
 
   /* Philippine time: 12:00 AM ng December 7, 2026 */
   const TARGET = new Date("2026-12-07T00:00:00+08:00").getTime();
@@ -444,6 +475,23 @@
     });
     hero.addEventListener("pointerleave", () => spot.classList.remove("on"));
   }
+
+  /* Gallery */
+  const photos = $("photos");
+  GALLERY_V1.forEach((src, i) => {
+    const li = document.createElement("li");
+    li.className = "photo";
+    if (src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "Team Likod V1, larawan " + (i + 1);
+      img.loading = "lazy";
+      li.append(img);
+    } else {
+      li.textContent = "Larawan " + (i + 1);
+    }
+    photos.append(li);
+  });
 
   /* Mga miyembro */
   const team = $("team");
