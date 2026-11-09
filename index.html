@@ -455,25 +455,16 @@
     return x - gap;
   }
   function layoutLockup() {
+    /* Baselines come from Sister Spray's real letter heights.
+       Browser text boxes include empty font space, so they can't be used here. */
     const end = place(likodLetters, 20, 300, 6);
-    const box = (items) => items.map((i) => i.front.getBBox()).reduce((u, r) => ({
-      top: Math.min(u.top, r.y), bottom: Math.max(u.bottom, r.y + r.height)
-    }), { top: Infinity, bottom: -Infinity });
-    const likod = box(likodLetters);
-    /* "team" sits on top of LIKOD, overlapping slightly like a pasted sticker */
-    place(teamLetters, 34, 200, 2);
-    const teamBox = box(teamLetters);
-    const teamY = 200 + (likod.top - 8 - teamBox.bottom);
-    place(teamLetters, 34, teamY, 2);
-    rowTeam.setAttribute("transform", `rotate(-4 34 ${teamY})`);
+    place(teamLetters, 34, -6, 2);
+    rowTeam.setAttribute("transform", "rotate(-4 34 -6)");
     const width = version.front.getComputedTextLength();
     const vx = end - width - 6;
-    const vy = likod.bottom + 78;
-    place([version], vx, vy, 0);
-    rowVersion.setAttribute("transform", `rotate(-9 ${vx + width / 2} ${vy - 24})`);
-    const all = title.getBBox();
-    const pad = 34;
-    title.setAttribute("viewBox", `${Math.floor(all.x - pad)} ${Math.floor(all.y - pad)} ${Math.ceil(all.width + pad * 2)} ${Math.ceil(all.height + pad * 2)}`);
+    place([version], vx, 392, 0);
+    rowVersion.setAttribute("transform", `rotate(-9 ${vx + width / 2} 368)`);
+    title.setAttribute("viewBox", `-16 -190 ${Math.ceil(end + 52)} 610`);
   }
   layoutLockup();
   if (document.fonts) {
