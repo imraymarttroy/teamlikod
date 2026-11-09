@@ -48,9 +48,12 @@
     padding: var(--gutter);
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: clamp(1.5rem, 4vh, 3rem);
+    gap: clamp(1.25rem, 3vh, 2rem);
     overflow: hidden;
+    background: var(--black);
+    isolation: isolate;
     --x: -999px;
     --y: -999px;
   }
@@ -64,9 +67,9 @@
     mask-image: radial-gradient(circle 230px at var(--x) var(--y), #000 25%, transparent 100%);
   }
   .desk span { position: absolute; font-size: clamp(1.8rem, 3.4vw, 3.2rem); line-height: 1; white-space: nowrap; }
-  .hero > *:not(.desk) { position: relative; }
+  .hero > *:not(.desk):not(.spot) { position: relative; }
 
-  h1 { max-width: 100%; }
+  h1 { width: 100%; }
   #lockup { display: block; width: 100%; height: auto; max-height: 46svh; overflow: visible; user-select: none; }
   #lockup text { font-family: "Sister Spray", var(--display); }
   #lockup .mark text { font-family: var(--marker); }
@@ -76,88 +79,75 @@
   .when {
     font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
     font-weight: 400;
-    max-width: 38ch;
-    line-height: 1.25;
+    line-height: 1.3;
+    text-align: center;
   }
 
   /* Countdown */
   .clock {
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr 1fr;
-    gap: clamp(.5rem, 1.2vw, 1rem);
-    perspective: 900px;
+    grid-template-columns: repeat(4, 1fr);
+    width: min(100%, 520px);
+    border: 1px solid var(--chalk);
   }
-  .tile {
-    position: relative;
-    padding: clamp(.5rem, 1.4vw, 1.25rem) clamp(.6rem, 1.4vw, 1.25rem) clamp(.6rem, 1vw, 1rem);
-    color: var(--black);
-    transform: rotate(var(--lean)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transition: transform .12s ease-out;
-    will-change: transform;
-  }
-  .tile { background: var(--black); color: var(--chalk); border: 1px solid #5a5a5a; --lean: 0deg; }
-  .tile:nth-child(4) { background: var(--chalk); color: var(--black); border-color: var(--chalk); }
-  .num {
-    display: block;
-    font: 400 clamp(4rem, 12vw, 12rem)/1 var(--display);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -.03em;
-  }
-  .unit { font-size: 1rem; font-weight: 400; }
-  .slam .num { animation: slam .28s cubic-bezier(.2,1.5,.4,1); }
-  @keyframes slam { from { transform: scale(1.18) translateY(-6%); } to { transform: none; } }
-  .clock.shake { animation: shake .35s linear; }
-  @keyframes shake {
-    20% { transform: translate(-7px, 3px) rotate(-.5deg); }
-    40% { transform: translate(6px, -4px) rotate(.6deg); }
-    60% { transform: translate(-4px, -2px); }
-    80% { transform: translate(3px, 3px); }
-  }
-  .party-now {
-    grid-column: 1 / -1;
-    background: var(--tarp);
-    color: var(--black);
-    font: 400 clamp(3rem, 11vw, 11rem)/1 var(--display);
-    padding: .15em .2em;
-  }
-
-  /* Hype controls */
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem clamp(1rem, 2.5vw, 2rem); }
-  .shout {
-    font: 400 1.0625rem/1 var(--body);
-    background: var(--chalk);
-    color: var(--black);
-    padding: .65em 1em;
-    box-shadow: none;
-    transition: transform .08s, box-shadow .08s;
+  .seg {
+    padding: .8rem .25rem .7rem;
+    text-align: center;
+    border-left: 1px solid var(--chalk);
+    transition: background .15s, color .15s;
     touch-action: manipulation;
   }
-  .shout:hover { background: var(--tarp); }
-  .shout:active { transform: scale(.96); }
-  .meter { flex: 1 1 200px; max-width: 380px; }
-  .meter-track { height: 16px; border: 2px solid var(--chalk); }
-  .meter-fill { height: 100%; width: 0; background: var(--red); transition: width .15s; }
-  .meter-text { font-size: 1rem; color: var(--dim); margin-top: .3rem; }
-  .ghost-btn {
-    font-weight: 400;
-    text-decoration: underline;
-    text-underline-offset: .2em;
-    padding: .5rem 0;
+  .seg:first-child { border-left: 0; }
+  .seg:hover, .seg[aria-pressed="true"] { background: var(--chalk); color: var(--black); }
+  .num {
+    display: flex;
+    justify-content: center;
+    font: 700 clamp(1.75rem, 5vw, 2.75rem)/1 var(--body);
   }
-  .ghost-btn:hover { color: var(--tarp); }
+  .d { display: block; width: .62em; height: 1em; overflow: hidden; }
+  .d i { display: block; font-style: normal; animation: roll .22s ease-out; }
+  @keyframes roll { from { transform: translateY(100%); } to { transform: none; } }
+  .unit { display: block; margin-top: .35rem; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; }
+  .readout { min-height: 1.5em; margin-top: -.75rem; color: var(--dim); font-size: 1rem; font-variant-numeric: tabular-nums; }
+  .party-now {
+    grid-column: 1 / -1;
+    padding: .6em;
+    text-align: center;
+    font: 700 clamp(1.5rem, 4vw, 2.25rem)/1 var(--body);
+  }
 
-  .flying {
-    position: fixed;
-    z-index: 50;
+  /* Google Calendar */
+  .cal {
+    padding: .75em 1.4em;
+    border: 1px solid var(--chalk);
+    background: var(--chalk);
+    color: var(--black);
+    font-size: 1.0625rem;
+    line-height: 1;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+  }
+  .cal:hover { background: var(--black); color: var(--chalk); }
+
+  /* Bilog na bumabaliktad ng kulay */
+  .spot {
+    position: absolute;
+    left: -70px;
+    top: -70px;
+    z-index: 5;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: difference;
     pointer-events: none;
-    font: 400 clamp(1.25rem, 2.4vw, 2rem)/1 var(--scrawl);
-    animation: fly 1s ease-out forwards;
-    white-space: nowrap;
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1);
+    transition: transform .1s ease-out, opacity .2s;
   }
-  @keyframes fly {
-    from { transform: translate(-50%, 0) scale(.5) rotate(0); opacity: 1; }
-    to { transform: translate(var(--dx), -46vh) scale(1.25) rotate(var(--spin)); opacity: 0; }
-  }
+  .spot.on { opacity: 1; }
+  .spot.big { transform: translate(var(--x), var(--y)) scale(.35); }
+
   .bit {
     position: fixed;
     top: -20px;
@@ -174,95 +164,28 @@
   h2 { font: 400 clamp(1.75rem, 3.4vw, 2.75rem)/1.15 var(--body); letter-spacing: -.01em; }
   .intro { max-width: 52ch; margin-top: .6rem; color: var(--dim); font-size: 1.0625rem; }
 
-  /* Platform */
-  .promises { list-style: none; padding: 0; margin-top: clamp(2rem, 5vw, 3.5rem); }
-  .promise {
-    position: relative;
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: clamp(1rem, 2.4vw, 1.75rem) 0;
-    padding-right: clamp(7rem, 22vw, 16rem);
-    border-top: 2px solid var(--ink);
-    font: 400 clamp(1.125rem, 1.8vw, 1.5rem)/1.3 var(--body);
-    color: var(--chalk);
-    transition: color .12s;
-  }
-  .promise:hover { color: var(--tarp); }
-  .promise[aria-pressed="true"] { color: var(--dim); }
-  .stamp {
-    position: absolute;
-    right: .5rem;
-    top: 50%;
-    padding: .1em .35em;
-    border: 1px solid var(--red);
-    color: var(--red);
-    font: 400 clamp(.85rem, 1.2vw, 1rem)/1.2 var(--body);
-    transform: translateY(-50%) rotate(var(--stamp, -9deg)) scale(2);
-    opacity: 0;
-    transition: transform .14s cubic-bezier(.3,1.5,.5,1), opacity .08s;
-  }
-  .promise[aria-pressed="true"] .stamp { opacity: 1; transform: translateY(-50%) rotate(var(--stamp, -9deg)) scale(1); }
-  .tally { margin-top: 1.25rem; font-family: var(--scrawl); font-size: 2.2rem; line-height: 1; color: var(--tarp); }
-
-  /* Members ballot */
+  /* Team */
   .members { background: var(--black); border-top: 1px solid #5a5a5a; }
-  .ballot-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1.5rem; }
-  .all-btn {
-    font: 400 1rem/1 var(--body);
-    color: var(--black);
-    background: var(--tarp);
-    padding: .8em 1.1em;
-  }
-  .all-btn:hover { background: var(--chalk); }
-  .ballot {
+  .team {
     list-style: none;
     padding: 0;
     margin-top: clamp(2rem, 5vw, 3.5rem);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
-    column-gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+    gap: clamp(2rem, 4vw, 3rem) clamp(1rem, 2.5vw, 2rem);
   }
-  .member {
-    display: grid;
-    grid-template-columns: auto clamp(72px, 9vw, 104px) 1fr;
-    gap: clamp(.75rem, 1.6vw, 1.25rem);
-    align-items: start;
-    padding: 1.5rem 0;
-    border-top: 2px solid var(--ink);
-  }
-  .oval {
-    width: 58px;
-    height: 34px;
-    margin-top: .3rem;
-    border: 3px solid var(--chalk);
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-  }
-  .oval::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--tarp);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .22s steps(5);
-  }
-  .oval:hover { border-color: var(--tarp); }
-  .oval[aria-checked="true"]::after { transform: scaleX(1); }
   .face {
-    aspect-ratio: 1;
+    aspect-ratio: 4 / 5;
     display: grid;
     place-items: center;
-    font: 400 clamp(1.125rem, 1.8vw, 1.5rem)/1 var(--body);
-    color: var(--black);
+    background: #1c1c1c;
+    color: #6e6e6e;
+    font: 400 clamp(1.5rem, 3vw, 2.25rem)/1 var(--body);
     overflow: hidden;
   }
   .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .member h3 { font: 400 clamp(1.125rem, 1.6vw, 1.375rem)/1.2 var(--body); }
-  .role { font-family: var(--scrawl); font-size: 1.75rem; line-height: 1.1; color: var(--dim); margin-top: .2rem; }
-  .bio { margin-top: .4rem; color: var(--dim); max-width: 46ch; font-size: 1rem; }
+  .member h3 { margin-top: 1rem; font: 600 1.125rem/1.25 var(--body); }
+  .bio { margin-top: .35rem; color: var(--dim); max-width: 46ch; font-size: 1rem; }
 
   footer { padding: 2rem var(--gutter) 3rem; color: var(--dim); font-family: var(--scrawl); font-size: 2rem; line-height: 1.1; }
 
@@ -270,9 +193,6 @@
     #lockup { max-height: none; }
     .desk span:nth-child(n+6):nth-child(-n+7) { display: none; }
     .desk span:nth-child(8) { left: 5% !important; top: 94% !important; }
-    .clock { grid-template-columns: 1fr 1fr; }
-    .num { font-size: 21vw; }
-    .member { grid-template-columns: auto 64px 1fr; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -295,7 +215,7 @@
   </div>
 
   <h1 id="title">
-    <svg id="lockup" role="img" aria-label="Team Likod V.6" viewBox="0 0 1100 420" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <svg id="lockup" role="img" aria-label="Team Likod V.6" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id="graph" width="16" height="16" patternUnits="userSpaceOnUse">
           <rect width="16" height="16" fill="#fff"/>
@@ -304,42 +224,25 @@
       </defs>
     </svg>
   </h1>
-  <p class="when">Year End Party. December 7, 2026. Huwag kang lilingon.</p>
+  <p class="when">Year End Party, December 7, 2026, Huwag kang makakalimot!</p>
 
   <div class="clock" id="clock" role="timer" aria-label="Countdown hanggang December 7, 2026">
-    <div class="tile"><span class="num" id="days">00</span><span class="unit">Araw</span></div>
-    <div class="tile"><span class="num" id="hours">00</span><span class="unit">Oras</span></div>
-    <div class="tile"><span class="num" id="minutes">00</span><span class="unit">Minuto</span></div>
-    <div class="tile"><span class="num" id="seconds">00</span><span class="unit">Segundo</span></div>
+    <button class="seg" type="button" data-unit="days"><span class="num" id="days"></span><span class="unit">Araw</span></button>
+    <button class="seg" type="button" data-unit="hours"><span class="num" id="hours"></span><span class="unit">Oras</span></button>
+    <button class="seg" type="button" data-unit="minutes"><span class="num" id="minutes"></span><span class="unit">Minuto</span></button>
+    <button class="seg" type="button" data-unit="seconds"><span class="num" id="seconds"></span><span class="unit">Segundo</span></button>
   </div>
+  <p class="readout" id="readout"></p>
 
-  <div class="actions">
-    <button class="shout" id="shout" type="button">Sumigaw</button>
-    <div class="meter">
-      <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
-      <p class="meter-text" id="meterText">Pindutin para painitin ang party.</p>
-    </div>
-    <button class="ghost-btn" id="calendar" type="button">Idagdag sa calendar</button>
-  </div>
+  <a class="cal" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Team%20Likod%20Year%20End%20Party&amp;dates=20261207/20261208&amp;ctz=Asia/Manila">Idagdag sa Google Calendar</a>
+
+  <div class="spot" id="spot" aria-hidden="true"></div>
 </header>
 
 <main>
-  <section class="block" aria-labelledby="platform-title">
-    <h2 id="platform-title">Plataporma ng likod</h2>
-    <p class="intro">Galing sa huling row ng classroom. Pindutin ang bawat pangako para aprubahan.</p>
-    <ul class="promises" id="promises"></ul>
-    <p class="tally" id="tally" aria-live="polite"></p>
-  </section>
-
   <section class="block members" aria-labelledby="members-title">
-    <div class="ballot-head">
-      <div>
-        <h2 id="members-title">Ang mga kandidato</h2>
-        <p class="intro">Itiman ang oval ng paborito mo. Pwede lahat, magkakaibigan naman kami.</p>
-      </div>
-      <button class="all-btn" id="voteAll" type="button">Iboto ang buong likod</button>
-    </div>
-    <ul class="ballot" id="ballot"></ul>
+    <h2 id="members-title">Ang Team</h2>
+    <ul class="team" id="team"></ul>
   </section>
 </main>
 
@@ -348,26 +251,17 @@
 <script>
   /* ====== PALITAN DITO ANG MGA MEMBER ======
      name: pangalan
-     role: nakakatawang posisyon
      bio:  description
      photo: optional, hal. "images/juan.jpg"   */
   const MEMBERS = [
-    { name: "Member 1", role: "Pangulo ng Huling Row", bio: "Ilagay dito ang description ni Member 1." },
-    { name: "Member 2", role: "Bise ng Pangongopya", bio: "Ilagay dito ang description ni Member 2." },
-    { name: "Member 3", role: "Kalihim ng Group Chat", bio: "Ilagay dito ang description ni Member 3." },
-    { name: "Member 4", role: "Ingat-yaman ng Ambagan", bio: "Ilagay dito ang description ni Member 4." },
-    { name: "Member 5", role: "Senador ng Siomai", bio: "Ilagay dito ang description ni Member 5." },
-    { name: "Member 6", role: "Kinatawan ng mga Late", bio: "Ilagay dito ang description ni Member 6." },
-    { name: "Member 7", role: "Tagapagsalita ng Tsismis", bio: "Ilagay dito ang description ni Member 7." },
-    { name: "Member 8", role: "Punong Tagatawa", bio: "Ilagay dito ang description ni Member 8." }
-  ];
-
-  const PROMISES = [
-    "Walang maiiwan sa group chat.",
-    "May kopya ng notes ang lahat bago mag-exam.",
-    "Laging may reserved na upuan sa likod.",
-    "Babayaran ang utang sa siomai. Balang araw.",
-    "Walang late sa December 7."
+    { name: "Member 1", bio: "Ilagay dito ang description ni Member 1." },
+    { name: "Member 2", bio: "Ilagay dito ang description ni Member 2." },
+    { name: "Member 3", bio: "Ilagay dito ang description ni Member 3." },
+    { name: "Member 4", bio: "Ilagay dito ang description ni Member 4." },
+    { name: "Member 5", bio: "Ilagay dito ang description ni Member 5." },
+    { name: "Member 6", bio: "Ilagay dito ang description ni Member 6." },
+    { name: "Member 7", bio: "Ilagay dito ang description ni Member 7." },
+    { name: "Member 8", bio: "Ilagay dito ang description ni Member 8." }
   ];
 
   /* Philippine time: 12:00 AM ng December 7, 2026 */
@@ -377,16 +271,6 @@
   const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const $ = (id) => document.getElementById(id);
   const pick = (list) => list[Math.floor(Math.random() * list.length)];
-
-  const store = {
-    get(key, fallback) {
-      try { return JSON.parse(localStorage.getItem("likod:" + key)) ?? fallback; }
-      catch { return fallback; }
-    },
-    set(key, value) {
-      try { localStorage.setItem("likod:" + key, JSON.stringify(value)); } catch {}
-    }
-  };
 
   function confetti(count) {
     if (calm) return;
@@ -484,14 +368,45 @@
 
   /* Countdown */
   const clock = $("clock");
+  const readout = $("readout");
   const fields = { days: $("days"), hours: $("hours"), minutes: $("minutes"), seconds: $("seconds") };
+  const UNITS = {
+    days: [86400, "araw"],
+    hours: [3600, "oras"],
+    minutes: [60, "minuto"],
+    seconds: [1, "segundo"]
+  };
+  let pinned = "seconds";
   let timer;
+
+  function setDigits(el, text) {
+    if (el.children.length !== text.length) {
+      el.replaceChildren(...[...text].map(() => {
+        const box = document.createElement("span");
+        box.className = "d";
+        box.append(document.createElement("i"));
+        return box;
+      }));
+    }
+    [...text].forEach((char, i) => {
+      const box = el.children[i];
+      if (box.textContent === char) return;
+      const next = document.createElement("i");
+      next.textContent = char;
+      box.replaceChildren(next);
+    });
+  }
+
+  function syncPinned() {
+    segs.forEach((seg) => seg.setAttribute("aria-pressed", seg.dataset.unit === pinned));
+  }
 
   function tick() {
     const left = TARGET - Date.now();
     if (left <= 0) {
       clearInterval(timer);
       clock.innerHTML = '<div class="party-now">Party na, Likod!</div>';
+      readout.remove();
       confetti(160);
       return;
     }
@@ -502,193 +417,61 @@
       minutes: Math.floor(total / 60) % 60,
       seconds: total % 60
     };
-    for (const key in values) {
-      const text = String(values[key]).padStart(2, "0");
-      const el = fields[key];
-      if (el.textContent !== text) {
-        el.textContent = text;
-        const tile = el.parentElement;
-        tile.classList.remove("slam");
-        void tile.offsetWidth;
-        tile.classList.add("slam");
-      }
-    }
+    for (const key in values) setDigits(fields[key], String(values[key]).padStart(2, "0"));
+    const [size, label] = UNITS[pinned];
+    readout.textContent = Math.floor(total / size).toLocaleString("en-US") + " " + label + " na lang.";
   }
+
+  /* Pumili ng unit sa countdown */
+  const segs = [...document.querySelectorAll(".seg")];
+  segs.forEach((seg) => {
+    seg.addEventListener("click", () => {
+      pinned = seg.dataset.unit;
+      syncPinned();
+      tick();
+    });
+  });
+  syncPinned();
   tick();
   timer = setInterval(tick, 1000);
 
-  /* Tiles sumusunod sa pointer */
-  if (!calm) {
-    document.querySelectorAll(".tile").forEach((tile) => {
-      tile.addEventListener("pointermove", (e) => {
-        const box = tile.getBoundingClientRect();
-        tile.style.setProperty("--ry", ((e.clientX - box.left) / box.width - .5) * 22 + "deg");
-        tile.style.setProperty("--rx", -((e.clientY - box.top) / box.height - .5) * 22 + "deg");
-      });
-      tile.addEventListener("pointerleave", () => {
-        tile.style.setProperty("--rx", "0deg");
-        tile.style.setProperty("--ry", "0deg");
-      });
+  /* Bilog na bumabaliktad ng black and white */
+  if (!calm && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const spot = $("spot");
+    hero.addEventListener("pointermove", (e) => {
+      spot.classList.add("on");
+      spot.classList.toggle("big", !!e.target.closest(".seg, .cal"));
     });
+    hero.addEventListener("pointerleave", () => spot.classList.remove("on"));
   }
 
-  /* Sumigaw button */
-  const SHOUTS = ["Likod!", "Walang iwanan!", "Dec 7!", "Laban!", "Oy!", "Tara na!", "Party!"];
-  const shout = $("shout");
-  const meterFill = $("meterFill");
-  const meterText = $("meterText");
-  let heat = 0;
-
-  shout.addEventListener("click", () => {
-    if (!calm) {
-      const box = shout.getBoundingClientRect();
-      const word = document.createElement("span");
-      word.className = "flying";
-      word.textContent = pick(SHOUTS);
-      word.style.color = pick(COLORS);
-      word.style.left = box.left + box.width / 2 + "px";
-      word.style.top = box.top + "px";
-      word.style.setProperty("--dx", `calc(-50% + ${Math.random() * 360 - 180}px)`);
-      word.style.setProperty("--spin", (Math.random() * 40 - 20) + "deg");
-      word.addEventListener("animationend", () => word.remove());
-      document.body.append(word);
-    }
-    heat += 10;
-    meterFill.style.width = heat + "%";
-    meterText.textContent = heat < 50 ? "Lakasan pa." : heat < 100 ? "Malapit na, isa pa." : "Rinig sa buong campus!";
-    if (heat >= 100) {
-      clock.classList.remove("shake");
-      void clock.offsetWidth;
-      clock.classList.add("shake");
-      confetti(120);
-      heat = 0;
-      setTimeout(() => {
-        if (heat === 0) {
-          meterFill.style.width = "0";
-          meterText.textContent = "Pindutin para painitin ulit.";
-        }
-      }, 1800);
-    }
-  });
-
-  /* Calendar file */
-  $("calendar").addEventListener("click", () => {
-    const ics = [
-      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Team Likod//Year End Party//FIL",
-      "BEGIN:VEVENT", "UID:year-end-party-2026@teamlikod",
-      "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, ""),
-      "DTSTART;VALUE=DATE:20261207", "DTEND;VALUE=DATE:20261208",
-      "SUMMARY:Team Likod Year End Party", "END:VEVENT", "END:VCALENDAR"
-    ].join("\r\n");
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
-    link.download = "team-likod-year-end-party.ics";
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-  });
-
-  /* Plataporma */
-  const approved = new Set(store.get("promises", []));
-  const promiseList = $("promises");
-  const tally = $("tally");
-
-  function updateTally() {
-    const n = approved.size;
-    tally.textContent = n === PROMISES.length
-      ? "Lahat aprubado. Isa ka na sa amin."
-      : n + " sa " + PROMISES.length + " ang inaprubahan mo";
-  }
-
-  PROMISES.forEach((text, i) => {
-    const li = document.createElement("li");
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "promise";
-    btn.setAttribute("aria-pressed", approved.has(i));
-    btn.style.setProperty("--stamp", (Math.random() * 16 - 12) + "deg");
-    btn.textContent = text;
-    const stamp = document.createElement("span");
-    stamp.className = "stamp";
-    stamp.setAttribute("aria-hidden", "true");
-    stamp.textContent = "Aprubado";
-    btn.append(stamp);
-    btn.addEventListener("click", () => {
-      approved.has(i) ? approved.delete(i) : approved.add(i);
-      btn.setAttribute("aria-pressed", approved.has(i));
-      store.set("promises", [...approved]);
-      updateTally();
-      if (approved.size === PROMISES.length) confetti(90);
-    });
-    li.append(btn);
-    promiseList.append(li);
-  });
-  updateTally();
-
-  /* Members ballot */
-  const votes = new Set(store.get("votes", []));
-  const ballot = $("ballot");
-  const voteAll = $("voteAll");
-  const ovals = [];
-
-  function syncVotes() {
-    ovals.forEach((oval, i) => oval.setAttribute("aria-checked", votes.has(i)));
-    store.set("votes", [...votes]);
-    voteAll.textContent = votes.size === MEMBERS.length ? "Burahin ang mga boto" : "Iboto ang buong likod";
-  }
-
-  MEMBERS.forEach((member, i) => {
+  /* Mga miyembro */
+  const team = $("team");
+  MEMBERS.forEach((member) => {
     const li = document.createElement("li");
     li.className = "member";
 
-    const oval = document.createElement("button");
-    oval.type = "button";
-    oval.className = "oval";
-    oval.setAttribute("role", "checkbox");
-    oval.setAttribute("aria-label", "Iboto si " + member.name);
-    oval.addEventListener("click", () => {
-      votes.has(i) ? votes.delete(i) : votes.add(i);
-      syncVotes();
-      if (votes.has(i)) confetti(24);
-    });
-    ovals.push(oval);
-
     const face = document.createElement("div");
     face.className = "face";
-    face.style.background = COLORS[i % COLORS.length];
     if (member.photo) {
       const img = document.createElement("img");
       img.src = member.photo;
       img.alt = member.name;
+      img.loading = "lazy";
       face.append(img);
     } else {
       face.setAttribute("aria-hidden", "true");
       face.textContent = member.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase();
     }
 
-    const info = document.createElement("div");
     const name = document.createElement("h3");
     name.textContent = member.name;
-    const role = document.createElement("p");
-    role.className = "role";
-    role.textContent = member.role;
     const bio = document.createElement("p");
     bio.className = "bio";
     bio.textContent = member.bio;
-    info.append(name, role, bio);
 
-    li.append(oval, face, info);
-    ballot.append(li);
-  });
-  syncVotes();
-
-  voteAll.addEventListener("click", () => {
-    if (votes.size === MEMBERS.length) {
-      votes.clear();
-    } else {
-      MEMBERS.forEach((_, i) => votes.add(i));
-      confetti(140);
-    }
-    syncVotes();
+    li.append(face, name, bio);
+    team.append(li);
   });
 </script>
 </body>
