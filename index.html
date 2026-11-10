@@ -67,7 +67,7 @@
     mask-image: radial-gradient(circle 230px at var(--x) var(--y), #000 25%, transparent 100%);
   }
   .desk span { position: absolute; font-size: clamp(1.8rem, 3.4vw, 3.2rem); line-height: 1; white-space: nowrap; }
-  .hero > *:not(.desk):not(.spot) { position: relative; }
+  .hero > *:not(.desk) { position: relative; }
 
   h1 { width: 100%; }
   #lockup { display: block; width: 100%; height: auto; max-height: 46svh; overflow: visible; user-select: none; }
@@ -128,25 +128,6 @@
     transition: background .15s, color .15s;
   }
   .cal:hover { background: var(--black); color: var(--chalk); }
-
-  /* Bilog na bumabaliktad ng kulay */
-  .spot {
-    position: absolute;
-    left: -70px;
-    top: -70px;
-    z-index: 5;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: #fff;
-    mix-blend-mode: difference;
-    pointer-events: none;
-    opacity: 0;
-    transform: translate(var(--x), var(--y)) scale(1);
-    transition: transform .1s ease-out, opacity .2s;
-  }
-  .spot.on { opacity: 1; }
-  .spot.big { transform: translate(var(--x), var(--y)) scale(.35); }
 
   .bit {
     position: fixed;
@@ -275,8 +256,6 @@
   <p class="readout" id="readout"></p>
 
   <a class="cal" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Team%20Likod%20Year%20End%20Party&amp;dates=20261207/20261208&amp;ctz=Asia/Manila">Idagdag sa Google Calendar</a>
-
-  <div class="spot" id="spot" aria-hidden="true"></div>
 </header>
 
 <main>
@@ -489,16 +468,6 @@
   syncPinned();
   tick();
   timer = setInterval(tick, 1000);
-
-  /* Bilog na bumabaliktad ng black and white */
-  if (!calm && matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    const spot = $("spot");
-    hero.addEventListener("pointermove", (e) => {
-      spot.classList.add("on");
-      spot.classList.toggle("big", !!e.target.closest(".seg, .cal"));
-    });
-    hero.addEventListener("pointerleave", () => spot.classList.remove("on"));
-  }
 
   /* Gallery */
   function photoItem(src, version, i, isCopy) {
