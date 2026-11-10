@@ -171,19 +171,14 @@
   /* Gallery */
   .gallery { border-top: 1px solid #5a5a5a; }
   .gallery + .gallery { border-top: 0; padding-top: 0; }
-  .strip {
-    margin: clamp(2rem, 5vw, 3.5rem) calc(var(--gutter) * -1) 0;
-    overflow: hidden;
-  }
-  /* Dalawang kopya ng mga larawan, kaya tuloy-tuloy ang -50% */
   .photos {
     list-style: none;
     padding: 0;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
     display: flex;
-    width: max-content;
-    animation: slide-left 60s linear infinite;
+    flex-wrap: wrap;
+    gap: clamp(.5rem, 1.2vw, 1rem);
   }
-  @keyframes slide-left { to { transform: translateX(-50%); } }
   .soon {
     margin-top: clamp(2rem, 5vw, 3.5rem);
     height: max(180px, 21vw);
@@ -193,10 +188,8 @@
     font: 400 clamp(3rem, 8vw, 6rem)/1 var(--scrawl);
   }
   .photo {
-    flex: none;
-    width: max(240px, 28vw);
-    margin-right: clamp(.5rem, 1.2vw, 1rem);
-    aspect-ratio: 4 / 3;
+    height: clamp(180px, 22vw, 320px);
+    max-width: 100%;
     display: grid;
     place-items: center;
     background: #1c1c1c;
@@ -204,7 +197,8 @@
     font-size: 1rem;
     overflow: hidden;
   }
-  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo.empty { aspect-ratio: 4 / 3; }
+  .photo img { height: 100%; width: auto; max-width: 100%; object-fit: cover; display: block; }
 
   footer { padding: 2rem var(--gutter) 3rem; color: var(--dim); font-family: var(--scrawl); font-size: 2rem; line-height: 1.1; }
 
@@ -216,8 +210,6 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .strip { overflow-x: auto; }
-    .photo[aria-hidden] { display: none; }
   }
 </style>
 </head>
@@ -292,7 +284,7 @@
   const GALLERY = {
     V1: ["images/v1/v1-1.jpg", "images/v1/v1-2.jpg"],
     V2: ["images/v2/v2-1.jpg", "images/v2/v2-2.jpg"],
-    V3: ["", "", "", "", "", ""],
+    V3: ["images/v3/v3-1.jpg", "images/v3/v3-2.jpg"],
     V4: ["images/v4/v4-1.jpg", "images/v4/v4-2.jpg", "images/v4/v4-3.jpg", "images/v4/v4-4.jpg", "images/v4/v4-5.jpg"],
     V5: ["", "", "", "", "", ""],
     V6: null
@@ -470,17 +462,17 @@
   timer = setInterval(tick, 1000);
 
   /* Gallery */
-  function photoItem(src, version, i, isCopy) {
+  function photoItem(src, version, i) {
     const li = document.createElement("li");
     li.className = "photo";
-    if (isCopy) li.setAttribute("aria-hidden", "true");
     if (src) {
       const img = document.createElement("img");
       img.src = src;
-      img.alt = isCopy ? "" : "Team Likod " + version + ", larawan " + (i + 1);
+      img.alt = "Team Likod " + version + ", larawan " + (i + 1);
       img.loading = "lazy";
       li.append(img);
     } else {
+      li.classList.add("empty");
       li.textContent = "Larawan " + (i + 1);
     }
     return li;
@@ -497,15 +489,10 @@
     section.append(title);
 
     if (list) {
-      const strip = document.createElement("div");
-      strip.className = "strip";
       const photos = document.createElement("ul");
       photos.className = "photos";
-      [false, true].forEach((isCopy) => {
-        list.forEach((src, i) => photos.append(photoItem(src, version, i, isCopy)));
-      });
-      strip.append(photos);
-      section.append(strip);
+      list.forEach((src, i) => photos.append(photoItem(src, version, i)));
+      section.append(photos);
     } else {
       const soon = document.createElement("p");
       soon.className = "soon";
