@@ -189,15 +189,32 @@
 
   /* Gallery */
   .gallery { border-top: 1px solid #5a5a5a; }
+  .gallery + .gallery { border-top: 0; padding-top: 0; }
+  .strip {
+    margin: clamp(2rem, 5vw, 3.5rem) calc(var(--gutter) * -1) 0;
+    overflow: hidden;
+  }
+  /* Dalawang kopya ng mga larawan, kaya tuloy-tuloy ang -50% */
   .photos {
     list-style: none;
     padding: 0;
+    display: flex;
+    width: max-content;
+    animation: slide-left 60s linear infinite;
+  }
+  @keyframes slide-left { to { transform: translateX(-50%); } }
+  .soon {
     margin-top: clamp(2rem, 5vw, 3.5rem);
+    height: max(180px, 21vw);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-    gap: clamp(.5rem, 1.2vw, 1rem);
+    place-items: center;
+    background: #1c1c1c;
+    font: 400 clamp(3rem, 8vw, 6rem)/1 var(--scrawl);
   }
   .photo {
+    flex: none;
+    width: max(240px, 28vw);
+    margin-right: clamp(.5rem, 1.2vw, 1rem);
     aspect-ratio: 4 / 3;
     display: grid;
     place-items: center;
@@ -218,6 +235,8 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
+    .strip { overflow-x: auto; }
+    .photo[aria-hidden] { display: none; }
   }
 </style>
 </head>
@@ -266,10 +285,7 @@
     <ul class="team" id="team"></ul>
   </section>
 
-  <section class="block gallery" aria-labelledby="gallery-title">
-    <h2 id="gallery-title">Team Likod V1</h2>
-    <ul class="photos" id="photos"></ul>
-  </section>
+  <div id="galleries"></div>
 </main>
 
 <footer>Team Likod. Nasa likod mo lang kami.</footer>
@@ -292,8 +308,16 @@
 
   /* ====== PALITAN DITO ANG MGA PICTURE NG GALLERY ======
      Ilagay ang file path sa loob ng quotes, hal. "images/v1/party.jpg".
-     Habang blangko, placeholder ang lalabas. */
-  const GALLERY_V1 = ["", "", "", "", "", ""];
+     Habang blangko, placeholder ang lalabas.
+     Pag handa na ang V6, palitan ang null ng listahan ng mga picture. */
+  const GALLERY = {
+    V1: ["", "", "", "", "", ""],
+    V2: ["", "", "", "", "", ""],
+    V3: ["", "", "", "", "", ""],
+    V4: ["", "", "", "", "", ""],
+    V5: ["", "", "", "", "", ""],
+    V6: null
+  };
 
   /* Philippine time: 12:00 AM ng December 7, 2026 */
   const TARGET = new Date("2026-12-07T00:00:00+08:00").getTime();
@@ -477,20 +501,50 @@
   }
 
   /* Gallery */
-  const photos = $("photos");
-  GALLERY_V1.forEach((src, i) => {
+  function photoItem(src, version, i, isCopy) {
     const li = document.createElement("li");
     li.className = "photo";
+    if (isCopy) li.setAttribute("aria-hidden", "true");
     if (src) {
       const img = document.createElement("img");
       img.src = src;
-      img.alt = "Team Likod V1, larawan " + (i + 1);
+      img.alt = isCopy ? "" : "Team Likod " + version + ", larawan " + (i + 1);
       img.loading = "lazy";
       li.append(img);
     } else {
       li.textContent = "Larawan " + (i + 1);
     }
-    photos.append(li);
+    return li;
+  }
+
+  Object.entries(GALLERY).forEach(([version, list]) => {
+    const section = document.createElement("section");
+    section.className = "block gallery";
+    section.setAttribute("aria-labelledby", "gallery-" + version);
+
+    const title = document.createElement("h2");
+    title.id = "gallery-" + version;
+    title.textContent = "Team Likod " + version;
+    section.append(title);
+
+    if (list) {
+      const strip = document.createElement("div");
+      strip.className = "strip";
+      const photos = document.createElement("ul");
+      photos.className = "photos";
+      [false, true].forEach((isCopy) => {
+        list.forEach((src, i) => photos.append(photoItem(src, version, i, isCopy)));
+      });
+      strip.append(photos);
+      section.append(strip);
+    } else {
+      const soon = document.createElement("p");
+      soon.className = "soon";
+      soon.textContent = "Soon";
+      section.append(soon);
+    }
+
+    $("galleries").append(section);
   });
 
   /* Mga miyembro */
